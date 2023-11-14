@@ -1,12 +1,19 @@
-# PayPal NodeJS integration
+# PayPal NodeJS Integration
 
-Tutoriel PayPal : https://developer.paypal.com/docs/checkout/standard/integrate/
+PayPal Tutorial: [https://developer.paypal.com/docs/checkout/standard/integrate/](https://developer.paypal.com/docs/checkout/standard/integrate/)
 
 ## Installation
 
-1. Clonez le dépôt : `git clone https://github.com/votre-utilisateur/votre-projet.git`
-2. Installez les dépendances : `npm install`
+1. Clone the repository: `git clone https://github.com/lucaskameleoon/PayPal_nodeJS_tuto.git`
+2. Install dependencies: `npm install`
 
 ## Configuration
 
-Créez un fichier `.env` à la racine du projet et ajoutez les variables d'environnement nécessaires.
+Create a `.env` file at the root of the project and add the necessary environment variables.
+
+## How to Run
+
+To start the project, run the following command:
+
+```bash
+npm start
