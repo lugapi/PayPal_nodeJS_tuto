@@ -9,7 +9,7 @@ PayPal Tutorial: [https://developer.paypal.com/docs/checkout/standard/integrate/
 
 ## Configuration
 
-Create a `.env` file at the root of the project and add the necessary environment variables.
+Duplicate `.env.exemple` to a `.env` file at the root of the project and add the necessary environment variables.
 
 ## How to Run
 
