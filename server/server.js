@@ -239,6 +239,7 @@ app.post("/api/stc", async (req, res) => {
 
 app.get("/", (req, res) => {
   res.render("index", {
+    clientId: PAYPAL_CLIENT_ID,
     envCurrency: PAYPAL_CURRENCY
   });
 });
