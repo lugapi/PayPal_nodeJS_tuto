@@ -5,7 +5,7 @@ const options = {
   mode: "tree",
   search: true,
 };
-const editor = new JSONEditor(container, options);
+const editorVault = new JSONEditor(container, options);
 
 const jsonFirstTime = {
   intent: "CAPTURE",
@@ -79,16 +79,16 @@ const jsonReturning = {
     },
   },
 };
-editor.set(jsonFirstTime);
-editor.expandAll();
+editorVault.set(jsonFirstTime);
+editorVault.expandAll();
 
 var jsonToSend = jsonFirstTime;
 
 function toggleFirstTime() {
   console.log("toggleFirstTime");
-  editor.set(jsonFirstTime);
+  editorVault.set(jsonFirstTime);
   jsonToSend = jsonFirstTime;
-  editor.expandAll();
+  editorVault.expandAll();
   updateInvoiceID();
   document.getElementById("getJSON").disabled = false;
   document.getElementById("getJSON").classList.remove("disabled");
@@ -96,33 +96,14 @@ function toggleFirstTime() {
 
 function toggleReturning() {
   console.log("toggleReturning");
-  editor.set(jsonReturning);
+  editorVault.set(jsonReturning);
   jsonToSend = jsonReturning;
-  editor.expandAll();
+  editorVault.expandAll();
   updateInvoiceID();
 }
 
-function getVaultID() {
-  console.log("fetch custID to get token");
-
-  fetch("/api/generateTokenVault", {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      customerID: document.querySelector(".customerID").value,
-    }),
-  })
-    .then((res) => res.json())
-    .then((response) => {
-      console.log(response);
-      console.log("jsonToSend", jsonToSend);
-    });
-}
-
 document.getElementById("getJSON").onclick = function () {
-  jsonToSend = editor.get();
+  jsonToSend = editorVault.get();
 
   // CHECK WHICH SCENARIO IS SELECTED
   if (!document.getElementById("firstTimeOption").checked) {
@@ -156,8 +137,7 @@ document.getElementById("getJSON").onclick = function () {
         JSON.stringify(data.data, null, 2);
       document.getElementById("headers").classList.remove("hidden");
 
-      var e = document.getElementById("paypal-button-container");
-      e.innerHTML = "";
+      removePPButtons();
 
       // // Add script to document
       var scriptElement = document.createElement("script");
@@ -275,8 +255,9 @@ document.getElementById("getJSON").onclick = function () {
                       orderData.payment_source.paypal.attributes.vault.customer.id;
                     document.querySelector("#returningOption").checked = true;
                     document.getElementById("returningOption").checked = true;
-                    document.querySelector(".customerInput").style.display ="flex";
-                    e.innerHTML = "";
+                    document.querySelector(".customerInput").style.display =
+                      "flex";
+                    removePPButtons();
                     toggleReturning();
                   }
                 }
@@ -303,6 +284,11 @@ function resultMessage(message) {
   const container = document.querySelector("#responseCapture");
   document.querySelector(".responses").classList.remove("hidden");
   container.innerHTML = message;
+}
+
+function removePPButtons() {
+  var e = document.getElementById("paypal-button-container");
+  e.innerHTML = "";
 }
 
 function updateInvoiceID() {
@@ -339,6 +325,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Écouteur d'événement pour les boutons radio
   function handleRadioChange() {
+    removePPButtons();
     if (firstRadio.checked) {
       hideCustomerID();
     } else if (secondRadio.checked) {
