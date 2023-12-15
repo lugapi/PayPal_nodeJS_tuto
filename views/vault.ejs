@@ -1,7 +1,7 @@
 <div class="helpOption flex flex-col sm:flex-row gap-4">
     <div class="helpDiv w-full sm:w-1/2">
-        <div class="flex flex-col m-5 p-4 sm:p-8 bg-white dark:bg-gray-500 shadow sm:rounded-lg">
-            <h1 id="help-title" class="font-semibold text-xl text-gray-800 dark:text-white leading-tight pb-4">How to use?</h1>
+        <div class="flex flex-col m-5 p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            <h1 id="help-title" class="font-semibold text-xl text-gray-800 leading-tight pb-4">How to use?</h1>
             <div class="helpContent pt-5">
                 <ol class="list-decimal px-5 flex flex-col gap-1">
                     <li>Select the scenario : First time payment or returning payment.</li>
@@ -15,22 +15,22 @@
             </div>
         </div>
     </div>
-    <div class="itemOptions flex flex-col m-5 p-4 sm:p-8 bg-white dark:bg-gray-500 shadow sm:rounded-lg w-full sm:w-1/2">
+    <div class="itemOptions flex flex-col m-5 p-4 sm:p-8 bg-white shadow sm:rounded-lg w-full sm:w-1/2">
         <div class="flex flex-col gap-2 m-2">
-            <h1 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight pb-4">Options</h1>
-            <h2 class="font-semibold text-lg text-gray-800 dark:text-white leading-tight pb-4">Select the scenario:</h3>
+            <h1 class="font-semibold text-xl text-gray-800 leading-tight pb-4">Options</h1>
+            <h2 class="font-semibold text-lg text-gray-800 leading-tight pb-4">Select the scenario:</h3>
             <div class="flex flex-col gap-4">
                 <div class="flex flex-col gap-4 justify-around">
                     <div class="flex items-center">
                         <input checked id="firstTimeOption" type="radio" value="" name="default-radio"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
                             onchange="toggleFirstTime()">
                         <label for="firstTimeOption" class="ml-2 text-sm font-medium text-gray-900">First
                             time</label>
                     </div>
                     <div class="flex items-center">
                         <input id="returningOption" type="radio" value="" name="default-radio"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
                             onchange="toggleReturning()">
                         <label for="returningOption" class="ml-2 text-sm font-medium text-gray-900">Returning
                             flow</label>
