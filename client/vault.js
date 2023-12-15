@@ -127,14 +127,8 @@ document.getElementById("getJSON").onclick = function () {
     })
     .then(function (data) {
       console.log(data);
-
-      document.getElementById("requestHeader").innerHTML = JSON.stringify(
-        data.curlPostValue,
-        null,
-        2
-      );
-      document.getElementById("requestHeaderResponse").innerHTML =
-        JSON.stringify(data.data, null, 2);
+      document.getElementById("requestHeader").innerHTML = prettyPrintObject(data.curlPostValue);
+      document.getElementById("requestHeaderResponse").innerHTML = prettyPrintObject(data.data);
       document.getElementById("headers").classList.remove("hidden");
 
       removePPButtons();
@@ -177,8 +171,6 @@ document.getElementById("getJSON").onclick = function () {
                 method: "post",
                 body: JSON.stringify({
                   contentBody: jsonToSend,
-                  // header: headerValue,
-                  // trackingID: uuid
                 }),
                 headers: {
                   "Content-Type": "application/json",
@@ -189,13 +181,7 @@ document.getElementById("getJSON").onclick = function () {
                 })
                 .then(function (orderData) {
                   console.log(orderData);
-                  if (orderData.name) {
-                    // document.querySelector("#response").innerHTML += JSON.stringify(orderData, null, 2);
-                    // document.querySelector("#response").classList.remove("hidden");
-                  }
-                  console.log(orderData.id);
-                  document.querySelector("#orderDataResponse").innerHTML +=
-                    JSON.stringify(orderData, null, 2);
+                  document.querySelector("#orderDataResponse").innerHTML += prettyPrintObject(orderData);
                   return orderData.id;
                 });
             },
@@ -297,11 +283,6 @@ function updateInvoiceID() {
   jsonReturning.purchase_units[0].invoice_id = invoiceID;
 }
 
-function updateVaultID() {
-  jsonFirstTime.purchase_units[0].invoice_id = invoiceID;
-  jsonReturning.purchase_units[0].invoice_id = invoiceID;
-}
-
 function getinvoiceID() {
   var timestp = Date.now();
   var invoiceID = "invoice_test_" + timestp;
@@ -313,17 +294,17 @@ document.addEventListener("DOMContentLoaded", function () {
   var secondRadio = document.getElementById("returningOption");
   var customerInput = document.querySelector(".customerInput");
 
-  // Fonction pour afficher le champ Customer ID
+  // Display Customer ID
   function showCustomerID() {
     customerInput.style.display = "flex";
   }
 
-  // Fonction pour masquer le champ Customer ID
+  // Hide Customer ID
   function hideCustomerID() {
     customerInput.style.display = "none";
   }
 
-  // Écouteur d'événement pour les boutons radio
+  // Listener for radio boutons
   function handleRadioChange() {
     removePPButtons();
     if (firstRadio.checked) {
@@ -333,10 +314,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Ajouter le gestionnaire d'événements aux boutons radio
   firstRadio.addEventListener("change", handleRadioChange);
   secondRadio.addEventListener("change", handleRadioChange);
 
-  // Vérifier l'état initial des boutons radio au chargement de la page
   handleRadioChange();
 });

@@ -243,7 +243,7 @@ function createPayPalButton(jsonToSend, headerValue, uuid = null) {
           .then(function (orderData) {
             console.log(orderData);
             if (orderData.name) {
-              document.querySelector("#response").innerHTML += JSON.stringify(orderData, null, 2);
+              document.querySelector("#response").innerHTML += prettyPrintObject(orderData);
               document.querySelector("#response").classList.remove("hidden");
             }
             console.log(orderData.id);
@@ -293,7 +293,7 @@ function createPayPalButton(jsonToSend, headerValue, uuid = null) {
               orderData,
               JSON.stringify(orderData, null, 2)
             );
-            resultMessage(JSON.stringify(orderData, null, 2));
+            resultMessage(prettyPrintObject(orderData));
 
           }
         } catch (error) {
@@ -408,12 +408,11 @@ function doSTC(contentToSend, uuid) {
       console.log("data", data);
       document.querySelector(".waitForSTC").classList.add("hidden");
       document.querySelector(".stcResultDiv").classList.remove("hidden");
-      // document.querySelector(".stcResultDiv pre.stcResultHeader").innerHTML = JSON.stringify(data, null, 2);
       document.querySelector(".stcResultDiv pre.stcResultHeader").innerHTML = "PayPal Debug ID : " + data["paypal-debug-id"]
       // check if data.fullResponse exist
       if (data.error !== undefined && data.error !== null) {
         console.log('data.error ', data.error);
-        document.querySelector(".stcResultDiv").innerHTML = JSON.stringify(data.error, null, 2);
+        document.querySelector(".stcResultDiv").innerHTML = prettyPrintObject(data.error);
         document
           .querySelector(".stcResultDiv pre.stcResultBody")
           .classList.remove("hidden");

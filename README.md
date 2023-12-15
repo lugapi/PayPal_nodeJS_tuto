@@ -17,3 +17,8 @@ To start the project, run the following command:
 
 ```bash
 npm start
+```
+
+## How to Use
+
+Go to /shorcut or /vault to test PayPal shortcut or PayPal vault
