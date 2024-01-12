@@ -22,3 +22,18 @@ npm start
 ## How to Use
 
 Go to /shorcut or /vault to test PayPal shortcut or PayPal vault
+
+## Screenshots
+
+- Index
+![index](./screenshots/index.png)
+
+<br />
+
+- PayPal Shortcut
+![shortcut](./screenshots/paypal.png)
+
+<br />
+
+- PayPal Vault
+![PayPal Vault](./screenshots/vault.png)

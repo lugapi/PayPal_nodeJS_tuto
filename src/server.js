@@ -10,9 +10,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const { PORT = 8887 } = process.env;
+const { PORT } = process.env;
 
-// const { PORT = 8887 } = process.env;
 const app = express();
 
 app.use(express.static("client"));
