@@ -21,9 +21,13 @@ export const stcController = async (req, res) => {
     } = req.body;
     const {
       httpStatusCode,
-      headers
+      headers,
+      jsonResponse
     } = await stc(uuid, contentBody);
-    res.status(httpStatusCode).json(headers);
+    res.status(httpStatusCode).json({
+      headers,
+      jsonResponse
+    });
   } catch (error) {
     console.error("Failed to STC:", error);
     res.status(500).json({
@@ -54,7 +58,7 @@ const stc = async (uuid, contentBody) => {
   console.log("paypal debug id", response.headers.get("PayPal-Debug-Id"));
 
   // Ajoutez cette vérification pour s'assurer que le statut HTTP est défini
-  if (!response.ok) {
+  if (!response.ok && response.status !== 400) {
     throw new Error(`HTTP error! Status: ${response.status}. PayPal Debug ID : ${response.headers.get("PayPal-Debug-Id")}`);
   }
 

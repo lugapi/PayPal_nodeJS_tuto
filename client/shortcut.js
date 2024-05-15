@@ -406,17 +406,18 @@ function doSTC(contentToSend, uuid) {
     })
     .then(function (data) {
       console.log("data", data);
-      document.querySelector(".waitForSTC").classList.add("hidden");
-      document.querySelector(".stcResultDiv").classList.remove("hidden");
-      if(data["paypal-debug-id"]){
-        document.querySelector(".stcResultDiv pre.stcResultHeader").innerHTML = "PayPal Debug ID : " + data["paypal-debug-id"]
-      }
       // check if data.fullResponse exist
       if (data.error !== undefined && data.error !== null) {
         console.log('data.error ', data.error);
         document.querySelector(".stcResultDiv pre.stcResultBody").innerHTML = prettyPrintObject(data.error);
-        document.querySelector(".stcResultDiv pre.stcResultBody").classList.remove("hidden");
+      }else{
+        document.querySelector(".stcResultDiv pre.stcResultHeader").innerHTML = "PayPal Debug ID : " + data.headers["paypal-debug-id"];
+        document.querySelector(".stcResultDiv pre.stcResultBody").innerHTML = data.jsonResponse;
       }
+      document.querySelector(".stcResultDiv h3").classList.add("hidden");
+      document.querySelector(".stcResultDiv").classList.remove("hidden");
+      document.querySelector(".stcResultDiv pre.stcResultBody").classList.remove("hidden");
+
       stcProcessCompleted = true;
       return data;
     });
