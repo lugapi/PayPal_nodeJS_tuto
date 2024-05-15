@@ -146,20 +146,20 @@ editorSTC.set({
   additional_data: [
     {
       key: "sender_account_id",
-      value: "10000600",
+      value: "10000600"
     },
     {
       key: "sender_first_name",
-      value: "John",
+      value: "John"
     },
     {
       key: "sender_country_code",
-      value: "US",
+      value: "US"
     },
     {
       key: "sender_popularity_score",
-      value: "low",
-    },
+      value: "low"
+    }
   ],
 });
 editorSTC.expandAll();
@@ -408,14 +408,14 @@ function doSTC(contentToSend, uuid) {
       console.log("data", data);
       document.querySelector(".waitForSTC").classList.add("hidden");
       document.querySelector(".stcResultDiv").classList.remove("hidden");
-      document.querySelector(".stcResultDiv pre.stcResultHeader").innerHTML = "PayPal Debug ID : " + data["paypal-debug-id"]
+      if(data["paypal-debug-id"]){
+        document.querySelector(".stcResultDiv pre.stcResultHeader").innerHTML = "PayPal Debug ID : " + data["paypal-debug-id"]
+      }
       // check if data.fullResponse exist
       if (data.error !== undefined && data.error !== null) {
         console.log('data.error ', data.error);
-        document.querySelector(".stcResultDiv").innerHTML = prettyPrintObject(data.error);
-        document
-          .querySelector(".stcResultDiv pre.stcResultBody")
-          .classList.remove("hidden");
+        document.querySelector(".stcResultDiv pre.stcResultBody").innerHTML = prettyPrintObject(data.error);
+        document.querySelector(".stcResultDiv pre.stcResultBody").classList.remove("hidden");
       }
       stcProcessCompleted = true;
       return data;
