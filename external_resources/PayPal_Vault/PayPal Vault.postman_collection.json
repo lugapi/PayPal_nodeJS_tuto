@@ -1,0 +1,408 @@
+{
+	"info": {
+		"_postman_id": "877fafb2-a14b-4363-b46a-190ade5f22ad",
+		"name": "PayPal Vault",
+		"description": "This Codepen can be forked to be used it in parallel : [https://codepen.io/lucaskameleoon/pen/yLWYGWx](https://codepen.io/lucaskameleoon/pen/yLWYGWx)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26741779"
+	},
+	"item": [
+		{
+			"name": "First time",
+			"item": [
+				{
+					"name": "Generate user ID token for payer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"pm.collectionVariables.set(\"Access_Token\", responseData.access_token)",
+									"pm.collectionVariables.set(\"id_token\", responseData.id_token)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "response_type",
+									"value": "id_token",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{PayPalTestEndpoint}}/v1/oauth2/token",
+							"host": [
+								"{{PayPalTestEndpoint}}"
+							],
+							"path": [
+								"v1",
+								"oauth2",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"pm.collectionVariables.set(\"orderID\", responseData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"intent\": \"CAPTURE\",\n    \"purchase_units\": [\n        {\n            \"amount\": {\n                \"currency_code\": \"EUR\",\n                \"value\": \"100.00\"\n            },\n            \"shipping\": {\n                \"type\": \"SHIPPING\",\n                \"address\": {\n                    \"address_line_1\" : \"1 address test\",\n                    \"postal_code\": \"75002\",\n                    \"admin_area_2\": \"Paris\",\n                    \"country_code\":\"FR\"\n                }\n            }\n        }\n    ],\n    \"payment_source\": {\n        \"paypal\": {\n            \"attributes\": {\n                \"vault\": {\n                    \"store_in_vault\": \"ON_SUCCESS\",\n                    \"usage_type\": \"MERCHANT\",\n                    \"customer_type\": \"CONSUMER\"\n                }\n            },\n            \"experience_context\": {\n                \"return_url\": \"https://example.com/returnUrl\",\n                \"cancel_url\": \"https://example.com/cancelUrl\"\n            }\n        }\n    },\n    \"application_context\": {\n        \"shipping_preference\": \"SET_PROVIDED_ADDRESS\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PayPalTestEndpoint}}/v2/checkout/orders",
+							"host": [
+								"{{PayPalTestEndpoint}}"
+							],
+							"path": [
+								"v2",
+								"checkout",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{PayPalTestEndpoint}}/v2/checkout/orders/:orderID",
+							"host": [
+								"{{PayPalTestEndpoint}}"
+							],
+							"path": [
+								"v2",
+								"checkout",
+								"orders",
+								":orderID"
+							],
+							"variable": [
+								{
+									"key": "orderID",
+									"value": "{{orderID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Capture Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"pm.collectionVariables.set(\"captureID\", responseData.purchase_units[0].payments.captures[0].id);",
+									"pm.collectionVariables.set(\"customerID\", responseData.payment_source.paypal.attributes.vault.customer.id);",
+									"pm.collectionVariables.set(\"vaultID\", responseData.payment_source.paypal.attributes.vault.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{PayPalTestEndpoint}}/v2/checkout/orders/:orderID/capture",
+							"host": [
+								"{{PayPalTestEndpoint}}"
+							],
+							"path": [
+								"v2",
+								"checkout",
+								"orders",
+								":orderID",
+								"capture"
+							],
+							"variable": [
+								{
+									"key": "orderID",
+									"value": "{{orderID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Returning",
+			"item": [
+				{
+					"name": "Generate user ID token for payer with CustomerID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"pm.collectionVariables.set(\"Access_Token\", responseData.access_token)",
+									"pm.collectionVariables.set(\"id_token\", responseData.id_token)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "response_type",
+									"value": "id_token",
+									"type": "text"
+								},
+								{
+									"key": "target_customer_id",
+									"value": "{{customerID}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{PayPalTestEndpoint}}/v1/oauth2/token",
+							"host": [
+								"{{PayPalTestEndpoint}}"
+							],
+							"path": [
+								"v1",
+								"oauth2",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order MIT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"pm.collectionVariables.set(\"orderID\", responseData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{Access_Token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"intent\": \"CAPTURE\",\n    \"purchase_units\": [\n        {\n            \"amount\": {\n                \"currency_code\": \"EUR\",\n                \"value\": \"100.00\"\n            },\n            \"shipping\": {\n                \"type\": \"SHIPPING\",\n                \"address\": {\n                    \"address_line_1\": \"1 address test\",\n                    \"postal_code\": \"75002\",\n                    \"admin_area_2\": \"Paris\",\n                    \"country_code\": \"FR\"\n                }\n            }\n        }\n    ],\n    \"payment_source\": {\n        \"paypal\": {\n            \"experience_context\": {\n                \"shipping_preference\": \"SET_PROVIDED_ADDRESS\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PayPalTestEndpoint}}/v2/checkout/orders",
+							"host": [
+								"{{PayPalTestEndpoint}}"
+							],
+							"path": [
+								"v2",
+								"checkout",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get Order Copy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{PayPalTestEndpoint}}/v2/checkout/orders/:orderID",
+					"host": [
+						"{{PayPalTestEndpoint}}"
+					],
+					"path": [
+						"v2",
+						"checkout",
+						"orders",
+						":orderID"
+					],
+					"variable": [
+						{
+							"key": "orderID",
+							"value": "5H306869FY6496017"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{Secret}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{ClientID}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ClientID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "Secret",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "PayPalTestEndpoint",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "Access_Token",
+			"value": ""
+		},
+		{
+			"key": "id_token",
+			"value": ""
+		},
+		{
+			"key": "orderID",
+			"value": ""
+		},
+		{
+			"key": "captureID",
+			"value": ""
+		},
+		{
+			"key": "customerID",
+			"value": ""
+		},
+		{
+			"key": "vaultID",
+			"value": ""
+		}
+	]
+}
