@@ -78,7 +78,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"intent\": \"CAPTURE\",\n    \"purchase_units\": [\n        {\n            \"amount\": {\n                \"currency_code\": \"EUR\",\n                \"value\": \"100.00\"\n            },\n            \"shipping\": {\n                \"type\": \"SHIPPING\",\n                \"address\": {\n                    \"address_line_1\" : \"1 address test\",\n                    \"postal_code\": \"75002\",\n                    \"admin_area_2\": \"Paris\",\n                    \"country_code\":\"FR\"\n                }\n            }\n        }\n    ],\n    \"payment_source\": {\n        \"paypal\": {\n            \"attributes\": {\n                \"vault\": {\n                    \"store_in_vault\": \"ON_SUCCESS\",\n                    \"usage_type\": \"MERCHANT\",\n                    \"customer_type\": \"CONSUMER\"\n                }\n            },\n            \"experience_context\": {\n                \"return_url\": \"https://example.com/returnUrl\",\n                \"cancel_url\": \"https://example.com/cancelUrl\"\n            }\n        }\n    },\n    \"application_context\": {\n        \"shipping_preference\": \"SET_PROVIDED_ADDRESS\"\n    }\n}",
+							"raw": "{\n    \"intent\": \"CAPTURE\",\n    \"purchase_units\": [\n        {\n            \"amount\": {\n                \"currency_code\": \"EUR\",\n                \"value\": \"111.11\"\n            },\n            \"shipping\": {\n                \"type\": \"SHIPPING\",\n                \"address\": {\n                    \"address_line_1\" : \"1 address test\",\n                    \"postal_code\": \"75002\",\n                    \"admin_area_2\": \"Paris\",\n                    \"country_code\":\"FR\"\n                }\n            }\n        }\n    ],\n    \"payment_source\": {\n        \"paypal\": {\n            \"attributes\": {\n                \"vault\": {\n                    \"store_in_vault\": \"ON_SUCCESS\",\n                    \"usage_type\": \"MERCHANT\",\n                    \"customer_type\": \"CONSUMER\"\n                }\n            },\n            \"experience_context\": {\n                \"return_url\": \"https://example.com/returnUrl\",\n                \"cancel_url\": \"https://example.com/cancelUrl\"\n            }\n        }\n    },\n    \"application_context\": {\n        \"shipping_preference\": \"SET_PROVIDED_ADDRESS\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -94,32 +94,6 @@
 								"v2",
 								"checkout",
 								"orders"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Order",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{PayPalTestEndpoint}}/v2/checkout/orders/:orderID",
-							"host": [
-								"{{PayPalTestEndpoint}}"
-							],
-							"path": [
-								"v2",
-								"checkout",
-								"orders",
-								":orderID"
-							],
-							"variable": [
-								{
-									"key": "orderID",
-									"value": "{{orderID}}"
-								}
 							]
 						}
 					},
@@ -277,7 +251,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"intent\": \"CAPTURE\",\n    \"purchase_units\": [\n        {\n            \"amount\": {\n                \"currency_code\": \"EUR\",\n                \"value\": \"100.00\"\n            },\n            \"shipping\": {\n                \"type\": \"SHIPPING\",\n                \"address\": {\n                    \"address_line_1\": \"1 address test\",\n                    \"postal_code\": \"75002\",\n                    \"admin_area_2\": \"Paris\",\n                    \"country_code\": \"FR\"\n                }\n            }\n        }\n    ],\n    \"payment_source\": {\n        \"paypal\": {\n            \"experience_context\": {\n                \"shipping_preference\": \"SET_PROVIDED_ADDRESS\"\n            }\n        }\n    }\n}",
+							"raw": "{\n    \"intent\": \"CAPTURE\",\n    \"purchase_units\": [\n        {\n            \"amount\": {\n                \"currency_code\": \"EUR\",\n                \"value\": \"22.22\"\n            },\n            \"shipping\": {\n                \"type\": \"SHIPPING\",\n                \"address\": {\n                    \"address_line_1\": \"1 address test\",\n                    \"postal_code\": \"75002\",\n                    \"admin_area_2\": \"Paris\",\n                    \"country_code\": \"FR\"\n                }\n            }\n        }\n    ],\n    \"payment_source\": {\n        \"paypal\": {\n            \"experience_context\": {\n                \"shipping_preference\": \"SET_PROVIDED_ADDRESS\"\n            }\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -297,11 +271,138 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Capture Order MIT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"pm.collectionVariables.set(\"captureID\", responseData.purchase_units[0].payments.captures[0].id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{PayPalTestEndpoint}}/v2/checkout/orders/:orderID/capture",
+							"host": [
+								"{{PayPalTestEndpoint}}"
+							],
+							"path": [
+								"v2",
+								"checkout",
+								"orders",
+								":orderID",
+								"capture"
+							],
+							"variable": [
+								{
+									"key": "orderID",
+									"value": "{{orderID}}"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
-			"name": "Get Order Copy",
+			"name": "Payment Method tokens",
+			"item": [
+				{
+					"name": "List all payment tokens",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{PayPalTestEndpoint}}/v3/vault/payment-tokens?customer_id={{customerID}}",
+							"host": [
+								"{{PayPalTestEndpoint}}"
+							],
+							"path": [
+								"v3",
+								"vault",
+								"payment-tokens"
+							],
+							"query": [
+								{
+									"key": "customer_id",
+									"value": "{{customerID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a payment token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{PayPalTestEndpoint}}/v3/vault/payment-tokens/:PMID",
+							"host": [
+								"{{PayPalTestEndpoint}}"
+							],
+							"path": [
+								"v3",
+								"vault",
+								"payment-tokens",
+								":PMID"
+							],
+							"variable": [
+								{
+									"key": "PMID",
+									"value": "{{vaultID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete payment token",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{PayPalTestEndpoint}}/v3/vault/payment-tokens/:PMID",
+							"host": [
+								"{{PayPalTestEndpoint}}"
+							],
+							"path": [
+								"v3",
+								"vault",
+								"payment-tokens",
+								":PMID"
+							],
+							"variable": [
+								{
+									"key": "PMID",
+									"value": "{{vaultID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get Order",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -319,7 +420,7 @@
 					"variable": [
 						{
 							"key": "orderID",
-							"value": "5H306869FY6496017"
+							"value": "{{orderID}}"
 						}
 					]
 				}
@@ -379,30 +480,6 @@
 			"key": "PayPalTestEndpoint",
 			"value": "",
 			"type": "string"
-		},
-		{
-			"key": "Access_Token",
-			"value": ""
-		},
-		{
-			"key": "id_token",
-			"value": ""
-		},
-		{
-			"key": "orderID",
-			"value": ""
-		},
-		{
-			"key": "captureID",
-			"value": ""
-		},
-		{
-			"key": "customerID",
-			"value": ""
-		},
-		{
-			"key": "vaultID",
-			"value": ""
 		}
 	]
 }
