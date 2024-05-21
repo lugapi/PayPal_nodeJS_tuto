@@ -7,6 +7,9 @@ const options = {
 };
 const editorVault = new JSONEditor(container, options);
 
+// New timestamp
+const timestamp = new Date().getTime();
+
 const jsonFirstTime = {
   intent: "CAPTURE",
   purchase_units: [
@@ -37,6 +40,7 @@ const jsonFirstTime = {
           store_in_vault: "ON_SUCCESS",
           usage_type: "MERCHANT",
           customer_type: "CONSUMER",
+          description: `Test description for BA - ${timestamp}`,
         },
       },
       experience_context: {
