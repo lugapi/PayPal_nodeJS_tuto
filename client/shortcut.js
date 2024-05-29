@@ -184,6 +184,11 @@ function updateInvoiceID() {
 let stcProcessCompleted = false;
 
 document.getElementById("getJSON").onclick = function () {
+
+  // reset buttons
+  document.getElementById('paypal-button-container').innerHTML = '';
+  document.getElementById('paypalBNPL-button-container').innerHTML = '';
+
   const jsonToSend = editor.get();
   const headerValue = document.getElementById("negativetesting").value;
 
@@ -215,102 +220,93 @@ function createPayPalButton(jsonToSend, headerValue, uuid = null) {
   var i = document.getElementById("response");
   i.innerHTML = "";
 
-  paypal
-    .Buttons({
-      style: [
-        {
-          layout: "vertical",
-          color: "blue",
-          shape: "pill",
-          label: "paypal",
-        },
-      ],
-      createOrder: function (data, actions) {
-        return fetch("/api/orders", {
-          method: "post",
-          body: JSON.stringify({
-              contentBody: jsonToSend,
-              header: headerValue,
-              trackingID: uuid
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then(function (res) {
-            return res.json();
-          })
-          .then(function (orderData) {
-            console.log(orderData);
-            if (orderData.name) {
-              document.querySelector("#response").innerHTML += prettyPrintObject(orderData);
-              document.querySelector("#response").classList.remove("hidden");
-            }
-            console.log(orderData.id);
-            return orderData.id;
-          });
-      },
-      async onApprove(data, actions) {
-        console.log("dataOnApprove", data);
-        try {
-          const response = await fetch(`/api/orders/${data.orderID}/capture`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+  const buttonStyles = {
+    color: "gold",
+    label: "paypal",
+    shape: "rect",
+    tagline: "false"
+  };
+  const buttonStylesBNPL = {
+    color: "blue",
+    label: "paypal",
+    shape: "rect",
+    tagline: "false"
+  };
 
-          const orderData = await response.json();
-          // Three cases to handle:
-          //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-          //   (2) Other non-recoverable errors -> Show a failure message
-          //   (3) Successful transaction -> Show confirmation or thank you message
-
-          const errorDetail = orderData?.details?.[0];
-
-          if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
-            // (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-            // recoverable state, per https://developer.paypal.com/docs/checkout/standard/customize/handle-funding-failures/
-            return actions.restart();
-          } else if (errorDetail) {
-            // (2) Other non-recoverable errors -> Show a failure message
-            throw new Error(
-              `${errorDetail.description} (${orderData.debug_id})`
-            );
-          } else if (!orderData.purchase_units) {
-            throw new Error(JSON.stringify(orderData));
-          } else {
-            // (3) Successful transaction -> Show confirmation or thank you message
-            // Or go to another URL:  actions.redirect('thank_you.html');
-            const transaction =
-              orderData?.purchase_units?.[0]?.payments?.captures?.[0] ||
-              orderData?.purchase_units?.[0]?.payments?.authorizations?.[0];
-            resultMessage(
-              `Transaction ${transaction.status}: ${transaction.id}<br><br>See console for all available details`
-            );
-            console.log(
-              "Capture result",
-              orderData,
-              JSON.stringify(orderData, null, 2)
-            );
-            resultMessage(prettyPrintObject(orderData));
-
-          }
-        } catch (error) {
-          console.error(error);
-          resultMessage(
-            `Sorry, your transaction could not be processed...<br><br>${error}`
-          );
-        }
-      },
-      onError(err) {
-        console.log("ERROR OCCURED", err);
-      },
-      onCancel(data) {
-        console.log("CANCELED", data);
+  const createOrder = (data, actions) => {
+    return fetch("/api/orders", {
+      method: "post",
+      body: JSON.stringify({
+        contentBody: jsonToSend,
+        header: headerValue,
+        trackingID: uuid
+      }),
+      headers: {
+        "Content-Type": "application/json"
       },
     })
-    .render("#paypal-button-container");
+    .then(res => res.json())
+    .then(orderData => {
+      console.log(orderData);
+      if (orderData.name) {
+        document.querySelector("#response").innerHTML += prettyPrintObject(orderData);
+        document.querySelector("#response").classList.remove("hidden");
+      }
+      console.log(orderData.id);
+      return orderData.id;
+    });
+  };
+
+  const onApprove = async (data, actions) => {
+    console.log("dataOnApprove", data);
+    try {
+      const response = await fetch(`/api/orders/${data.orderID}/capture`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      const orderData = await response.json();
+
+      const errorDetail = orderData?.details?.[0];
+
+      if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
+        return actions.restart();
+      } else if (errorDetail) {
+        throw new Error(`${errorDetail.description} (${orderData.debug_id})`);
+      } else if (!orderData.purchase_units) {
+        throw new Error(JSON.stringify(orderData));
+      } else {
+        const transaction = orderData?.purchase_units?.[0]?.payments?.captures?.[0] ||
+                            orderData?.purchase_units?.[0]?.payments?.authorizations?.[0];
+        resultMessage(`Transaction ${transaction.status}: ${transaction.id}<br><br>See console for all available details`);
+        console.log("Capture result", orderData, JSON.stringify(orderData, null, 2));
+        resultMessage(prettyPrintObject(orderData));
+      }
+    } catch (error) {
+      console.error(error);
+      resultMessage(`Sorry, your transaction could not be processed...<br><br>${error}`);
+    }
+  };
+
+  const commonButtonConfig = (fundingSource, style) => ({
+    style: style,
+    fundingSource: fundingSource,
+    createOrder: createOrder,
+    onApprove: onApprove,
+    onError(err) {
+      console.log("ERROR OCCURED", err);
+    },
+    onCancel(data) {
+      console.log("CANCELED", data);
+    },
+  });
+
+  paypal.Buttons(commonButtonConfig(paypal.FUNDING.PAYPAL, buttonStyles)).render("#paypal-button-container");
+  if(document.getElementById('enableBNPL').checked){
+    paypal.Buttons(commonButtonConfig(paypal.FUNDING.PAYLATER, buttonStylesBNPL)).render("#paypalBNPL-button-container");
+  }
 }
 
 function resultMessage(message) {

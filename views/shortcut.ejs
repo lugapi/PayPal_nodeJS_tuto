@@ -30,6 +30,11 @@
         <h1 class="font-semibold text-xl text-gray-800 leading-tight pb-4">Options</h1>
         <div class="py-3 px-6 mb-0 bg-gray-200 border-b-1 border-gray-300 text-gray-900" id="headingThree">
             <div class="mb-0">
+                <h2 class="text-lg font-bold"> - Enable BNPL</h2>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="enableBNPL" checked>
+                    <label class="form-check-label" for="enableBNPL">Enable BNPL button</label>
+                </div>
                 <h2 class="text-lg font-bold"> - Pre set JSON request</h2>
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="shippingChoice"
@@ -104,6 +109,7 @@
             <pre class="stcUuid hidden"></pre>
         </div>
         <div id="paypal-button-container"></div>
+        <div id="paypalBNPL-button-container"></div>
         <pre id="response" class="hidden w-full bg-white rounded-lg p-5 overflow-auto border-2"></pre>
     </div>
 </div>
@@ -113,7 +119,7 @@
 </script>
 
 <script
-    src="https://www.paypal.com/sdk/js?client-id=<%= clientId %>&currency=<%= envCurrency %>&enable-funding=paylater&disable-funding=card,bancontact,sepa,giropay,sofort&components=messages,buttons&buyer-country=FR">
+    src="https://www.paypal.com/sdk/js?client-id=<%= clientId %>&currency=<%= envCurrency %>&enable-funding=paylater&disable-funding=card,bancontact,sepa,giropay,sofort&components=buttons&buyer-country=FR">
 </script>
 
 <script src="shortcut.js"></script>
