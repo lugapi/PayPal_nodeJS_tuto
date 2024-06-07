@@ -185,7 +185,7 @@ document.getElementById("getJSON").onclick = function () {
                 })
                 .then(function (orderData) {
                   console.log(orderData);
-                  document.querySelector("#orderDataResponse").innerHTML += prettyPrintObject(orderData);
+                  document.querySelector("#orderDataResponse").innerHTML = prettyPrintObject(orderData);
                   return orderData.id;
                 });
             },
