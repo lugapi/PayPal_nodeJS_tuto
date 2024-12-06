@@ -34,6 +34,7 @@ const json = {
             value: "50",
           },
           quantity: "2",
+          sku: "SKU_First-Product-Name"
         },
       ],
     },
@@ -64,6 +65,7 @@ const jsonS2S = {
             value: "50",
           },
           quantity: "2",
+          sku: "SKU_First-Product-Name"
         },
       ],
       shipping: {
@@ -109,6 +111,7 @@ const jsonWithAddressFeature = {
             value: "50",
           },
           quantity: "2",
+          sku: "SKU_First-Product-Name"
         },
       ],
       shipping: {
