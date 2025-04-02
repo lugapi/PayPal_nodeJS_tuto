@@ -10,8 +10,10 @@ const editorVault = new JSONEditor(container, options);
 // New timestamp
 const timestamp = new Date().getTime();
 
+const intentToUse = intent === "CAPTURE" ? "capture" : "authorize";
+
 const jsonFirstTime = {
-  intent: "CAPTURE",
+  intent: intent,
   purchase_units: [
     {
       amount: {
@@ -144,7 +146,7 @@ document.getElementById("getJSON").onclick = function () {
         encodeURIComponent(clientID) +
         "&currency=" +
         encodeURIComponent(currency) +
-        "&enable-funding=paylater&disable-funding=card,bancontact,sepa,giropay,sofort&components=messages,buttons&buyer-country=FR";
+        "&enable-funding=paylater&disable-funding=card,bancontact,sepa,giropay,sofort&components=messages,buttons&buyer-country=FR&intent="+intentToUse;
 
       scriptElement.id = "paypalScript";
 
@@ -193,8 +195,8 @@ document.getElementById("getJSON").onclick = function () {
             async onApprove(data, actions) {
               console.log("dataOnApprove", data);
               try {
-                const response = await fetch(
-                  `/api/orders/${data.orderID}/capture`,
+                let url = `/api/orders/${data.orderID}/${intentToUse}`
+                const response = await fetch(url,
                   {
                     method: "POST",
                     headers: {
